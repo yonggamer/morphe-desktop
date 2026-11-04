@@ -106,11 +106,9 @@
 
     <!-- Patcher Steps -->
     <string name="patching_step_loading_patches">Loading patches</string>
-    <string name="patching_step_preparing">Preparing</string>
     <string name="patching_step_merging_split_apk">Merging split APK</string>
     <string name="patching_step_read_apk">Read APK file</string>
     <string name="patching_step_applying_patches">Applying patches</string>
-    <string name="patching_step_saving">Saving</string>
     <string name="patching_step_writing_apk">Writing patched APK file</string>
     <string name="patching_step_signing">Signing patched APK file</string>
 
@@ -323,6 +321,8 @@
     <string name="patch_selection_error_title">Error loading patches</string>
     <string name="patch_selection_title">Select patches</string>
     <string name="patch_selection_cmd_preview">Command preview</string>
+    <string name="patch_selection_root_mode_description">Root mount mode</string>
+    <string name="patch_selection_lock_unavailable">Unavailable for root mount</string>
     <string name="patch_selection_continue_on_error_tooltip">Continue patching even if a patch fails</string>
     <string name="patch_selection_continue_on_error_description">Continue on error</string>
     <string name="patch_selection_no_patches_found">No patches found</string>
@@ -396,7 +396,7 @@
     <string name="patching_status_preparing">Preparing to patch</string>
     <string name="patching_status_in_progress">Applying patches</string>
     <string name="patching_completed_loading_result">Patching completed, loading result…</string>
-    <string name="patching_cancelled_loading_result">Patching cancelled, loading result…</string>
+    <string name="patching_cancelled_loading_result">Patching canceled, loading result…</string>
     <string name="patching_failed_loading_result">Patching failed, loading result…</string>
     <string name="patching_log_viewer_failed_to_read">Failed to read log file: %1$s</string>
     <string name="patching_log_viewer_title">Log file</string>
@@ -441,6 +441,15 @@
     <string name="result_adb_updating_on_device">Updating on %1$s…</string>
     <string name="result_adb_update_successful">Update successful!</string>
     <string name="result_adb_install_successful">Installation successful!</string>
+    <string name="result_adb_badge_root_mount">Root mount</string>
+    <string name="result_adb_mount_button">Mount on %1$s</string>
+    <string name="result_adb_mounting_on_device">Mounting on %1$s…</string>
+    <string name="result_adb_mount_successful">Mounting successful!</string>
+    <string name="result_adb_mount_su_prompt_hint">Mounting on %1$s… Check your device to grant Superuser permission if prompted</string>
+    <string name="result_adb_unmount_button">Unmount from %1$s</string>
+    <string name="result_adb_unmounting_on_device">Unmounting from %1$s…</string>
+    <string name="result_adb_root_not_detected">Root access was not detected on %1$s. Ensure Magisk/KernelSU/APatch is installed and su permission is granted</string>
+    <string name="result_adb_stock_app_not_installed">Stock app %1$s is not installed on %2$s. Install the official app first before mounting</string>
     <string name="result_link_default_restored">Default link handling restored</string>
     <string name="result_link_routed_stock_disabled">Links routed to patched app, stock disabled</string>
     <string name="result_adb_not_found_hint">ADB not found. Install Android SDK Platform Tools to enable direct installation</string>
@@ -552,7 +561,7 @@
     <string name="source_sheet_move_up_description">Move up</string>
     <string name="source_sheet_move_down_description">Move down</string>
     <string name="source_sheet_ignored_mpp_title">Ignored .mpp patterns</string>
-    <string name="source_sheet_ignored_mpp_hint">Only affects folder sources, which auto-load the newest .mpp in a folder. When picking that newest build, files whose name matches a pattern here are skipped. A plain word matches any file containing it (e.g. debug). Use * for globs (e.g. *-debug.mpp). *-sources.mpp and *-javadoc.mpp are always ignored</string>
+    <string name="source_sheet_ignored_mpp_hint">Only affects folder sources, which autoload the newest .mpp in a folder. When picking that newest build, files whose name matches a pattern here are skipped. A plain word matches any file containing it (e.g. debug). Use * for globs (e.g. *-debug.mpp). *-sources.mpp and *-javadoc.mpp are always ignored</string>
     <string name="source_sheet_ignored_mpp_placeholder">e.g. debug or *-debug.mpp</string>
     <string name="source_sheet_add_pattern_description">Add pattern</string>
     <string name="source_sheet_remove_pattern_description">Remove pattern</string>

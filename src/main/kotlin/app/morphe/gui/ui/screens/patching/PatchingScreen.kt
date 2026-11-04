@@ -85,7 +85,12 @@ fun PatchingScreenContent(viewModel: PatchingViewModel) {
         if (uiState.status == PatchingStatus.COMPLETED && uiState.outputPath != null && !uiState.hasAutoNavigated) {
             delay(1500.milliseconds)
             viewModel.markAutoNavigated()
-            navController.navigate(ResultScreenRoute(outputPath = uiState.outputPath!!))
+            navController.navigate(
+                ResultScreenRoute(
+                    outputPath = uiState.outputPath!!,
+                    isMount = viewModel.getConfig().mount
+                )
+            )
         } else if ((uiState.status == PatchingStatus.FAILED || uiState.status == PatchingStatus.CANCELLED) && !uiState.hasAutoNavigated) {
             delay(1500.milliseconds)
             viewModel.markAutoNavigated()
@@ -121,7 +126,8 @@ fun PatchingScreenContent(viewModel: PatchingViewModel) {
                             progress = uiState.progress,
                             completedPatches = uiState.patchedCount,
                             totalPatches = uiState.totalPatches,
-                            statusMessage = uiState.currentStepName,
+                            step = uiState.currentStep,
+                            isCompleted = uiState.status == PatchingStatus.COMPLETED,
                             isActive = uiState.isInProgress,
                             onCancel = { viewModel.cancelPatching() }
                         )
