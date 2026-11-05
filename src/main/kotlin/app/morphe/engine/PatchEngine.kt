@@ -44,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.EncodeDefault
@@ -94,7 +95,7 @@ object PatchEngine {
         val outputApk: File? = null,
         val patchFiles: List<File> = emptyList(),
         val bundleScopes: List<BundleScope> = emptyList(),
-        val patches: Set<Patch<*>> = emptySet(),
+        val patches: Set<Patch> = emptySet(),
         val enabledPatches: Set<String> = emptySet(),
         val disabledPatches: Set<String> = emptySet(),
         val exclusiveMode: Boolean = false,
@@ -315,6 +316,10 @@ object PatchEngine {
                 fileWorkspacePath = File(tempDir, "workspace").also { it.mkdirs() },
                 verifier = verifier,
                 validate = config.validate,
+                // Reported from the threads of the patcher, where a canceled run must not throw
+                progress = { task, done, total ->
+                    if (scopeContext.isActive) onEvent(PatchEvent.TaskProgress(task, done, total))
+                },
             )
 
             report(PatchEvent.StepStarted(PatchStep.LOADING_PATCHES))
@@ -338,7 +343,7 @@ object PatchEngine {
                     failureDetail = detail,
                 )
 
-                val finalPatches = mutableSetOf<Patch<*>>()
+                val finalPatches = mutableSetOf<Patch>()
 
                 val effectiveBundleScopes = if (config.bundleScopes.isNotEmpty()) {
                     config.bundleScopes
@@ -748,7 +753,7 @@ object PatchEngine {
     }
 
     private fun filterBundlePatches(
-        patches: Set<Patch<*>>,
+        patches: Set<Patch>,
         packageName: String,
         packageVersion: String,
         enabledNames: Set<String>,
@@ -760,7 +765,7 @@ object PatchEngine {
         exclusive: Boolean,
         force: Boolean,
         log: (String) -> Unit,
-    ): Set<Patch<*>> = buildSet {
+    ): Set<Patch> = buildSet {
         val enabledLower = enabledNames.map { it.lowercase() }.toSet()
         val disabledLower = disabledNames.map { it.lowercase() }.toSet()
 
@@ -797,7 +802,7 @@ object PatchEngine {
     }
 
     private fun filterPatches(
-        patches: Set<Patch<*>>,
+        patches: Set<Patch>,
         packageName: String,
         packageVersion: String,
         enabledPatches: Set<String>,
@@ -805,7 +810,7 @@ object PatchEngine {
         exclusiveMode: Boolean,
         forceCompatibility: Boolean,
         log: (String) -> Unit,
-    ): Set<Patch<*>> = buildSet {
+    ): Set<Patch> = buildSet {
         val disabledLower = disabledPatches.map { it.lowercase() }.toSet()
         val enabledLower = enabledPatches.map { it.lowercase() }.toSet()
 
@@ -834,7 +839,7 @@ object PatchEngine {
     }
 
     private fun isPatchCompatible(
-        patch: Patch<*>,
+        patch: Patch,
         patchName: String,
         packageName: String,
         packageVersion: String,

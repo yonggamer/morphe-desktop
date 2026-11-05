@@ -1,3 +1,24 @@
+# [2.1.0-dev.4](https://github.com/MorpheApp/morphe-desktop/compare/v2.1.0-dev.3...v2.1.0-dev.4) (2026-11-05)
+
+
+### Bug Fixes
+
+* Update to latest Patcher ([faf97a5](https://github.com/MorpheApp/morphe-desktop/commit/faf97a50f754745cc53eba8c491becbf50eb7d65))
+
+# [2.1.0-dev.3](https://github.com/MorpheApp/morphe-desktop/compare/v2.1.0-dev.2...v2.1.0-dev.3) (2026-11-05)
+
+
+### Features
+
+* Show patching progress as the patcher reports it ([b3aa432](https://github.com/MorpheApp/morphe-desktop/commit/b3aa43247e3d3c238308f4dfe04954b45cae8bc7))
+
+# [2.1.0-dev.2](https://github.com/MorpheApp/morphe-desktop/compare/v2.1.0-dev.1...v2.1.0-dev.2) (2026-11-04)
+
+
+### Features
+
+* Move `Tools` into `Settings` dialog ([#407](https://github.com/MorpheApp/morphe-desktop/issues/407)) ([36f3f2d](https://github.com/MorpheApp/morphe-desktop/commit/36f3f2de660726e99826617a67941865f241c335))
+
 # [2.1.0-dev.1](https://github.com/MorpheApp/morphe-desktop/compare/v2.0.0...v2.1.0-dev.1) (2026-11-04)
 
 
