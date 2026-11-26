@@ -7,14 +7,24 @@ package app.morphe.gui.ui.screens.home.components
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import app.morphe.engine.model.PatchedAppRecord
+import app.morphe.engine.patches.SourceUrl
+import app.morphe.engine.util.formatFileSize
 import app.morphe.gui.ui.screens.home.DeviceAppInfo
 import app.morphe.gui.ui.screens.home.RecallUpdateInfo
 import app.morphe.gui.ui.theme.MorpheTheme
+import app.morphe.gui.util.AppIconSource
+import app.morphe.gui.util.AppIconState
+import app.morphe.gui.util.DeviceMonitor
 import app.morphe.gui.util.FormatUtils
 import app.morphe.gui.util.currentLocale
+import app.morphe.gui.util.rememberAppIcon
 import app.morphe.morphe_desktop.generated.resources.*
+import java.io.File
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /** Returns version guidance for a patched app, or null if currently supported. */
@@ -24,10 +34,24 @@ internal fun appAdvice(u: RecallUpdateInfo): Pair<String, Boolean>? {
     return stringResource(Res.string.home_advice_unsupported_by_patches, u.appUsedVersion.removePrefix("v")) to true
 }
 
-/** Formats the release URL based on host platform conventions. */
-internal fun releaseUrl(sourceUrl: String, tag: String): String =
-    if (sourceUrl.contains("gitlab", ignoreCase = true)) "$sourceUrl/-/releases/$tag"
-    else "$sourceUrl/releases/tag/$tag"
+/** Resolves the [AppIconState] for a patched app record. */
+@Composable
+internal fun rememberPatchedAppIcon(record: PatchedAppRecord, deviceInfo: DeviceAppInfo?): AppIconState {
+    val deviceId = DeviceMonitor.state.collectAsState().value.selectedDevice?.takeIf { it.isReady }?.id
+    return rememberAppIcon(
+        listOfNotNull(
+            AppIconSource.Apk(File(record.outputApkPath)),
+            AppIconSource.Apk(File(record.inputApkPath)),
+            deviceId?.takeIf { deviceInfo?.installed == true }?.let { AppIconSource.Device(it, record.installedPackageName) },
+        )
+    )
+}
+
+/** Formats the release URL based on host platform conventions, or null if the host has no known release layout. */
+internal fun releaseUrl(sourceUrl: String, tag: String, pageUrl: String? = null): String? {
+    pageUrl?.takeIf { it.isNotBlank() }?.let { return it }
+    return SourceUrl.parse(sourceUrl)?.releaseUrl(tag)
+}
 
 /** Displays device installation status and signing verification. */
 @Composable
@@ -71,19 +95,31 @@ internal fun fullDate(millis: Long): String =
 
 /** Formats a timestamp into a compact relative or short date string. */
 @Composable
-internal fun relativeOrShortDate(millis: Long): String {
+internal fun relativeOrShortDate(
+    millis: Long,
+    capitalized: Boolean = false,
+    compact: Boolean = true,
+): String {
     val now = System.currentTimeMillis()
     val days = ((now - millis) / 86_400_000L).toInt()
     return when {
-        days <= 0 -> stringResource(Res.string.home_date_today)
-        days == 1 -> stringResource(Res.string.home_date_yesterday)
-        days < 7 -> stringResource(Res.string.home_date_days_ago, days)
-        else -> FormatUtils.formatShortDate(millis, currentLocale())
+        days <= 0 -> stringResource(if (capitalized) Res.string.changelog_date_today else Res.string.home_date_today)
+        days == 1 -> stringResource(if (capitalized) Res.string.changelog_date_yesterday else Res.string.home_date_yesterday)
+        days < 7 -> if (compact) {
+            stringResource(Res.string.home_date_days_ago, days)
+        } else {
+            pluralStringResource(Res.plurals.changelog_days_ago, days, days)
+        }
+        else -> if (compact) {
+            FormatUtils.formatShortDate(millis, currentLocale())
+        } else {
+            FormatUtils.formatFullMonthOrLongDate(millis, currentLocale(), nowMillis = now)
+        }
     }
 }
 
 @Composable
 internal fun humanSize(bytes: Long): String {
     if (bytes <= 0) return "-"
-    return FormatUtils.formatFileSize(bytes, currentLocale())
+    return formatFileSize(bytes, currentLocale())
 }

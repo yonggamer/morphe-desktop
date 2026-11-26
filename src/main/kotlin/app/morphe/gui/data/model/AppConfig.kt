@@ -49,13 +49,15 @@ data class AppConfig(
     val cardFills: Map<String, MorpheFill> = emptyMap(),
     val globalCardFill: MorpheFill? = null,
     val useSharpCorners: Boolean = false,
+    val useOutlines: Boolean = true,
+    val showAppIcons: Boolean = true,
+    val showMoreAppsCard: Boolean = true,
+    val communityNoticeAcknowledged: Boolean = false,
     val homeAppSortMode: String = "RECOMMENDED",
     val preferredPatchChannel: String = "STABLE",
     val useSimpleMode: Boolean = true,
     val patchSource: List<PatchSource> = listOf(DEFAULT_PATCH_SOURCE),
     val activePatchSourceId: String = "morphe-default",
-    // Persisted expand/collapse state for settings sections.
-    val collapsibleSectionStates: Map<String, Boolean> = emptyMap(),
     // Latest version for which update notification was dismissed.
     val dismissedUpdateVersion: String? = null,
     val updateChannelPreference: String? = null,
@@ -107,8 +109,8 @@ data class PatchSource (
 )
 
 @Serializable
-enum class PatchSourceType{
-    DEFAULT, GITHUB, GITLAB, LOCAL
+enum class PatchSourceType {
+    DEFAULT, GITHUB, GITLAB, CODEBERG, JSON, LOCAL
 }
 
 /** Release channel preference for update notifications. */

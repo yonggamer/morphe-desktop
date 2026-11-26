@@ -10,6 +10,7 @@ package app.morphe.desktop.command
 
 import app.morphe.engine.options.toPatchOption
 import app.morphe.engine.patches.compatibleVersionsForDisplay
+import app.morphe.engine.patches.displayLabel
 import app.morphe.engine.patches.isCompatibleWith
 import app.morphe.engine.patches.versionCodesFor
 import app.morphe.engine.patches.PatchResolver
@@ -34,7 +35,7 @@ internal object ListPatchesCommand : Runnable {
     // Patches is now flag based rather than position based
     @Option(
         names = ["--patches"],
-        description = ["Path to a MPP file or a GitHub repo url such as https://github.com/MorpheApp/morphe-patches"],
+        description = ["Path to a .mpp file, directory, GitHub/GitLab/Codeberg repo URL, or .json bundle URL such as https://github.com/MorpheApp/morphe-patches"],
         arity = "1..*",
         required = true
     )
@@ -165,11 +166,13 @@ internal object ListPatchesCommand : Runnable {
                         if (packages.isNotEmpty()) {
                             appendLine("\nCompatible packages:")
                             append(
-                                packages.joinToString("\n") { (name, versions) ->
+                                packages.joinToString("\n") { (name, formFactor, versions) ->
                                     buildString {
                                         val displayName = name ?: "(universal)"
+                                        append("\tPackage name: $displayName")
+                                        formFactor.displayLabel()?.let { append("\n\tForm factor: $it") }
                                         if (withVersions && versions.isNotEmpty()) {
-                                            appendLine("\tPackage name: $displayName")
+                                            appendLine()
                                             appendLine("\tCompatible versions:")
                                             append(versions.joinToString("\n").prependIndent("\t\t"))
 
@@ -182,8 +185,6 @@ internal object ListPatchesCommand : Runnable {
                                                 append("\n\tVersion codes:\n")
                                                 append(codesList.joinToString("\n").prependIndent("\t\t"))
                                             }
-                                        } else {
-                                            append("\tPackage name: $displayName")
                                         }
                                     }
                                 },
